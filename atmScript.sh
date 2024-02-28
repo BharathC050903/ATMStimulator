@@ -25,6 +25,16 @@ user_id_exists() {
     fi
 }
 
+# Function to read customer data
+read_customer_data() {
+    while IFS=, read -r acc_num name balance pass; do
+        if [ "$acc_num" == "$1" ]; then
+            customer_data="$name,$balance,$pass"
+            break
+        fi
+    done < "$customer_file"
+}
+
 # Function to sign up
 sign_up() {
     user_id=$(zenity --entry --title="Sign Up" --text="Enter your user ID:")
@@ -68,15 +78,7 @@ log_in() {
     return 1
 }
 
-# Function to read customer data
-read_customer_data() {
-    while IFS=, read -r acc_num name balance pass; do
-        if [ "$acc_num" == "$1" ]; then
-            customer_data="$name,$balance,$pass"
-            break
-        fi
-    done < "$customer_file"
-}
+
 
 # Function to display balance
 display_balance() {

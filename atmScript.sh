@@ -134,21 +134,29 @@ withdraw() {
 }
 
 
-# Function to display transaction history
+# Function to display transaction history within a date range
 display_transaction_history() {
     if [ -z "$account_number" ]; then
         zenity --error --title="Error" --text="No user logged in!"
         return
     fi
 
-    date_selected=$(zenity --calendar --title="Select Date" --text="Select the date to view transactions" --date-format="%Y-%m-%d" --window-icon=info)
-    if [ -n "$date_selected" ]; then
-        transactions=$(awk -v date="$date_selected" -v acc_num="$account_number" -F ',' '$1 ~ date && $4 == acc_num' "$transaction_file" | zenity --text-info --title="Transaction History" --width=600 --height=300)
-        if [ -z "$transactions" ]; then
-            zenity --info --title="Transaction History" --text="No transactions found for the selected date."
-        fi
+    start_date=$(zenity --calendar --title="Select Start Date" --text="Select the start date to view transactions" --date-format="%Y-%m-%d" --window-icon=info)
+    if [ -z "$start_date" ]; then
+        return
+    fi
+
+    end_date=$(zenity --calendar --title="Select End Date" --text="Select the end date to view transactions" --date-format="%Y-%m-%d" --window-icon=info)
+    if [ -z "$end_date" ]; then
+        return
+    fi
+
+    transactions=$(awk -v start="$start_date" -v end="$end_date" -v acc_num="$account_number" -F ',' '$1 >= start && $1 <= end && $4 == acc_num' "$transaction_file" | zenity --text-info --title="Transaction History" --width=600 --height=300)
+    if [ -z "$transactions" ]; then
+        zenity --info --title="Transaction History" --text="No transactions found within the selected date range."
     fi
 }
+
 
 
 

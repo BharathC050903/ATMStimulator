@@ -143,8 +143,16 @@ display_transaction_history() {
         return
     fi
 
+    current_date=$(date '+%Y-%m-%d')
+    
     start_date=$(zenity --calendar --title="Select Start Date" --text="Select the start date to view transactions" --date-format="%Y-%m-%d" --window-icon=info)
     if [ -z "$start_date" ]; then
+        return
+    fi
+    
+    # Check if start_date is after the current date
+    if [[ "$start_date" > "$current_date" ]]; then
+        zenity --error --title="Error" --text="Start date cannot be after the current date."
         return
     fi
 
@@ -153,11 +161,24 @@ display_transaction_history() {
         return
     fi
 
+    # Check if end_date is after the current date
+    if [[ "$end_date" > "$current_date" ]]; then
+        zenity --error --title="Error" --text="End date cannot be after the current date."
+        return
+    fi
+    
+    # Check if end_date is after start_date
+    if [[ "$end_date" < "$start_date" ]]; then
+        zenity --error --title="Error" --text="End date cannot be before the start date."
+        return
+    fi
+
     transactions=$(awk -v start="$start_date" -v end="$end_date" -v acc_num="$account_number" -F ',' '$1 >= start && $1 <= end && $4 == acc_num' "$transaction_file" | zenity --text-info --title="Transaction History" --width=600 --height=300)
     if [ -z "$transactions" ]; then
         zenity --info --title="Transaction History" --text="No transactions found within the selected date range."
     fi
 }
+
 
 
 

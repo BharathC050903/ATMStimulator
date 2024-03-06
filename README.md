@@ -11,7 +11,7 @@ This is a simple ATM simulator written in Bash script. It allows users to sign u
   - **Deposit**: Users can deposit money into their account.
   - **Withdraw**: Users can withdraw money from their account.
 - **Transaction History**: Users can view their transaction history within a specified date range.
-- **Error Handling**: The script provides error messages for invalid input or other errors using Zenity.
+- **Error Handling**: The script provides error messages for invalid input or other errors using zenity.
 
 ## Files
 
